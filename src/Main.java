@@ -1,27 +1,29 @@
-package com.syntax;
-
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        File myFile=new File("C:\\Users\\party\\OneDrive\\Documents\\excel\\DSAI140202.xlsx");
+        File myFile=new File("/Users/darienlin/Documents/BC work/FGGP7PTR01.xlsx");
         FileInputStream fis = new FileInputStream(myFile);
         XSSFWorkbook wb = new XSSFWorkbook(fis);
-        XSSFSheet firstSheet = wb.getSheetAt(0);
-        ArrayList<String> skuNameList = new ArrayList<String>();
-        ArrayList<String> picNameList = new ArrayList<String>();
-        Iterator<Row> rowIterator = firstSheet.iterator();
-        //CarMeth eat = new CarMeth("/Volumes/Krishna/Jar Files/poi-3.16-beta1/TestData.xlsx");
+        ArrayList<String> skuNameList = new ArrayList<>();
+        ArrayList<String> picNameList = new ArrayList<>();
 
+       //creates new workbook
+        XSSFWorkbook skuResult = new XSSFWorkbook();
+        CreationHelper createHelper = skuResult.getCreationHelper();
+
+        //creates new sheet
+        Sheet page1 = skuResult.createSheet("page1");
 
         //makes new excel file
         // (OutputStream fileOut = new FileOutputStream("skuResult.xlsx")) {
@@ -91,9 +93,26 @@ public class Main {
         picNow = picNow.substring(0,picNow.indexOf(".jpg") + 4);
         picNameList.add(picNow + allXImages);
 
+        for(int i = 0; i < skuNameList.size(); i++) {
+            Row skuRow = page1.createRow(i);
+            Cell cell = skuRow.createCell(0);
+            cell.setCellValue(skuNameList.get(i));
+        }
 
-        for(int i = 0; i < skuNameList.size(); i++)
-            System.out.println(skuNameList.get(i) +" " + picNameList.get(i) + "\n");
+        for(int i = 0; i < picNameList.size(); i++) {
+            Row imgRow = page1.createRow(i);
+            Cell cell = imgRow.createCell(1);
+            cell.setCellValue(picNameList.get(i));
+        }
+
+        //for(int i = 0; i < skuNameList.size();i++)
+            //sheet.autoSizeColumn(i);
+
+        FileOutputStream fileOut = new FileOutputStream("poi-generated-file.xlsx");
+        skuResult.write(fileOut);
+        fileOut.close();
+        skuResult.close();
+
 
 
 
